@@ -2,6 +2,8 @@ package de.dhbw.parprog;
 
 import org.apache.commons.lang.NotImplementedException;
 
+import java.util.Objects;
+
 
 public class Bank {
     /**
@@ -29,8 +31,8 @@ public class Bank {
      * @throws IllegalAccountStateException falls der Kontostand außerhalb des gültigen Wertebereichs geraten würde
      */
 	public void deposit(Account account, long amount) throws IllegalAccountStateException, IllegalArgumentException {
-        if (amount<=0) throw new IllegalArgumentException();
-        synchronized (account.getId()){
+        if (amount<0) throw new IllegalArgumentException();
+        synchronized (account){
             if (account.getMoney() + amount > Account.UPPER_LIMIT) throw new IllegalAccountStateException();
             account.transaction(amount);
         }
@@ -44,8 +46,8 @@ public class Bank {
      * @throws IllegalAccountStateException falls der Kontostand außerhalb des gültigen Wertebereichs geraten würde
      */
 	public void withdraw(Account account, long amount) throws IllegalAccountStateException, IllegalArgumentException {
-        if (amount<=0) throw new IllegalArgumentException();
-        synchronized (account.getId()){
+        if (amount<0) throw new IllegalArgumentException();
+        synchronized (account){
             if (account.getMoney() - amount < Account.LOWER_LIMIT) throw new IllegalAccountStateException();
             account.transaction(-amount);
         }
@@ -61,11 +63,11 @@ public class Bank {
      */
 	public void transfer(Account fromAccount, Account toAccount, long amount) throws IllegalAccountStateException, IllegalArgumentException {
         if (amount<=0) throw new IllegalArgumentException();
-        if (fromAccount.getId() == toAccount.getId()) throw new IllegalArgumentException();
+        if (Objects.equals(fromAccount.getId(), toAccount.getId())) throw new IllegalArgumentException();
         Account firstAccount = fromAccount.getId() > toAccount.getId()? fromAccount : toAccount;
         Account secondAccount = fromAccount.getId() < toAccount.getId()? fromAccount : toAccount;
-        synchronized (firstAccount.getId()){
-            synchronized (secondAccount.getId()){
+        synchronized (firstAccount){
+            synchronized (secondAccount){
                 if (fromAccount.getMoney() - amount < Account.LOWER_LIMIT) throw new IllegalAccountStateException();
                 if (toAccount.getMoney() + amount > Account.UPPER_LIMIT) throw new IllegalAccountStateException();
                 fromAccount.transaction(-amount);

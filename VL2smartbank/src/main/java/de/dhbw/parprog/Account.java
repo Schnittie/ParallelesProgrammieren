@@ -17,12 +17,13 @@ public class Account {
         return id;
     }
 
-    public synchronized void transaction(long amount){
+
+    public void transaction(long amount){
         cashMoney = cashMoney + amount;
         if (cashMoney< LOWER_LIMIT || cashMoney > UPPER_LIMIT) throw new IllegalAccountStateException();
     }
 
-    public synchronized long getMoney(){
+    public long getMoney(){
         return cashMoney;
     }
 
