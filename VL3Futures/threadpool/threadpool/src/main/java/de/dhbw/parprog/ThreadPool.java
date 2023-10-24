@@ -16,20 +16,19 @@ public class ThreadPool implements Callable <Integer> {
 	}
 
 	public static void main(String[] args) {
-		ExecutorService test = Executors.newFixedThreadPool(10);
+		ExecutorService test = Executors.newFixedThreadPool(5);
 		System.out.println("Calculation started");
 		List<Future<Integer>> results= new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
 			results.add(test.submit(new ThreadPool()));
 		}
-		int result = 0;
-		for (Future<Integer> integerFuture : results){
+		int result = results.stream().map(f->{
 			try {
-				result += integerFuture.get();
+				return f.get();
 			} catch (InterruptedException | ExecutionException e) {
 				throw new RuntimeException(e);
 			}
-        }
+        }).mapToInt(r -> r).sum();
 		System.out.println("DAS ergebnis ist "+ result);
 		test.shutdown();
 	}

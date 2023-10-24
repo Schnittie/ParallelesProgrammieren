@@ -1,0 +1,30 @@
+ CompletableFuture<File[]> dirContents = CompletableFuture.supplyAsync(dir::listFiles);
+
+       CompletableFuture<DirStats> currentDir = dirContents.thenApply(contents->{
+           DirStats dirStats = new DirStats();
+           for (File f: contents){
+                if (f.isFile()){
+                    dirStats.fileCount++;
+                    dirStats.totalSize += f.length();
+                }
+            }
+            return dirStats;
+        });
+
+        CompletableFuture<List<DirStats>> subDirs = dirContents.thenCompose(contents -> {
+           List<CompletableFuture<DirStats>> subDir = new ArrayList<>();
+           for (File f: contents){
+               if (f.isDirectory() && !f.getName().equals(".")){
+                    subDir.add(dirStats(f));
+               }
+           }
+          return sequence(subDir);
+       });
+
+       return currentDir.thenCombine(subDirs, (result, subDirResult) -> {
+            for (DirStats ds: subDirResult){
+                result.totalSize += ds.totalSize;
+                result.fileCount += ds.fileCount;
+            }
+            return result;
+        });
