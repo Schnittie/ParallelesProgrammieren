@@ -1,0 +1,22 @@
+apply plugin: 'java'
+
+sourceCompatibility = 1.9
+
+apply plugin: 'eclipse'
+// Run 'gradlew eclipse' for the eclipse project
+
+apply plugin: 'idea'
+// Run 'gradle idea' for the IntelliJ idea project (no longer necessary in idea 13)
+
+// Netbeans: See http://plugins.netbeans.org/plugin/44510/gradle-support
+
+
+apply plugin:'application'
+// Rung 'gradle run' to execute main program
+
+mainClassName = "de.dhbw.parprog.ReactiveMapReduce"
+
+
+repositories {
+	mavenCentral()
+}
