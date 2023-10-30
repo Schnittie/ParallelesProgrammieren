@@ -2,9 +2,8 @@ package de.dhbw.parprog;
 
 import java.util.concurrent.Flow;
 
-public class AvgAgeAndNumberCrawler implements Flow.Subscriber<Person> {
+public class AvgAgeCrawler implements Flow.Subscriber<Person> {
     int number = 0;
-    int maxName = 0;
     int totalAge =0;
     Flow.Subscription subscription;
 
@@ -16,9 +15,6 @@ public class AvgAgeAndNumberCrawler implements Flow.Subscriber<Person> {
         return number;
     }
 
-    public int getMaxName() {
-        return maxName;
-    }
 
     @Override
     public void onSubscribe(Flow.Subscription sub) {
@@ -28,10 +24,8 @@ public class AvgAgeAndNumberCrawler implements Flow.Subscriber<Person> {
 
     @Override
     public void onNext(Person item) {
-        maxName = Math.max(item.surname.length(), maxName);
         number++;
         totalAge += item.age;
-        System.out.println(" durschnittlicher alter : "+getAvgAge()+" number of students : "+getNumber()+" längster name : "+getMaxName());
         subscription.request(1);
     }
 
@@ -42,6 +36,6 @@ public class AvgAgeAndNumberCrawler implements Flow.Subscriber<Person> {
 
     @Override
     public void onComplete() {
-        System.out.println(" durschnittlicher alter : "+getAvgAge()+" number of students : "+getNumber()+" längster name : "+getMaxName());
+        System.out.println(" durschnittlicher alter : "+getAvgAge());
     }
 }
